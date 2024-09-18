@@ -24,3 +24,6 @@ elixir_binance_bot-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# secret.ex file with API keys, used in development
+/config/secret.exs
