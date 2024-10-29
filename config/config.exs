@@ -1,7 +1,12 @@
 import Config
 
-config :elixir_binance_bot, BinanceTradingBot,
-  base_url: "https://api.binance.com"
+config :elixir_binance_bot, ecto_repos: [ElixirBinanceBot.Repo]
 
-# Import secret config to get access to API keys
+config :elixir_binance_bot, ElixirBinanceBot,
+  # MAIN NET
+  # base_url: "https://api.binance.com"
+  # TEST NET
+  base_url: "https://testnet.binance.vision"
+
+# Import secret config to get access to API keys and database credentials
 import_config "secret.exs"

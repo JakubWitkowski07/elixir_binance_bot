@@ -14,7 +14,8 @@ defmodule ElixirBinanceBot.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger],
+      mod: {ElixirBinanceBot.Application, []}
     ]
   end
 
@@ -22,7 +23,9 @@ defmodule ElixirBinanceBot.MixProject do
   defp deps do
     [
       {:httpoison, "~> 2.2"},
-      {:jason, "~> 1.4"}
+      {:jason, "~> 1.4"},
+      {:postgrex, "~> 0.19.1"},
+      {:ecto_sql, "~> 3.12"}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
     ]
