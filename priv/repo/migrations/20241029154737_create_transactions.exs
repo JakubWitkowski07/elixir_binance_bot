@@ -15,6 +15,7 @@ defmodule ElixirBinanceBot.Repo.Migrations.CreateTransactions do
       add :buy_fee, :float
       add :sell_fee, :float
       add :profit, :float
+      timestamps()
     end
   end
 end

@@ -8,6 +8,7 @@ defmodule ElixirBinanceBot.Repo.Migrations.CreateTransactionSlots do
       add :trades_done, :integer
       add :trade_coin, :string
       add :busy, :boolean
+      timestamps()
     end
   end
 end
