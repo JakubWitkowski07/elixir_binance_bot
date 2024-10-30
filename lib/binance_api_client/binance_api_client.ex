@@ -30,7 +30,7 @@ defmodule BinanceApiClient do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         case Jason.decode(body) do
           {:ok, %{"price" => price}} ->
-            {:ok, price}
+            {:ok, String.to_float(price)}
 
           {:error, _error} ->
             {:error, "Failed to parse response"}
