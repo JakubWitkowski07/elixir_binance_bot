@@ -2,8 +2,7 @@ defmodule ElixirBinanceBot.Repo.Migrations.CreateTransactions do
   use Ecto.Migration
 
   def change do
-    create table(:transactions, primary_key: false) do
-      add :id, :integer, primary_key: true
+    create table(:transactions) do
       add :status, :string
       add :transaction_slot_id, :integer
       add :symbol, :string
