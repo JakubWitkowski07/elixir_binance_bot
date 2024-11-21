@@ -5,7 +5,9 @@ defmodule ElixirBinanceBot.Application do
     children = [
       # Ensure the Repo is started
       ElixirBinanceBot.Repo,
-      ElixirBinanceBot.PriceChecker
+      ElixirBinanceBot.PriceChecker,
+      ElixirBinanceBot.TransactionMaker,
+      ElixirBinanceBot.TransactionScheduler
     ]
 
     opts = [strategy: :one_for_one, name: ElixirBinanceBot.Supervisor]
