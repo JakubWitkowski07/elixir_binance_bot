@@ -66,7 +66,7 @@ defmodule ElixirBinanceBot.TransactionSlots do
     query =
       from(transaction_slot in TransactionSlots,
         where: transaction_slot.trade_coin == ^trade_coin and transaction_slot.status == "ready",
-        order_by: [desc: transaction_slot.budget],
+        order_by: [asc: transaction_slot.budget],
         limit: 1
       )
 
