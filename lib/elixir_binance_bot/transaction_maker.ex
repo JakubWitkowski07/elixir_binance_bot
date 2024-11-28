@@ -25,7 +25,7 @@ defmodule ElixirBinanceBot.TransactionMaker do
 
   ## Parameters
 
-  - `trading_pair` (string): The symbol of the trading pair (e.g., `"BTCUSDT"`).
+  - `trading_pair` (string): The symbol of the trading pair (e.g., `"BTCFDUSD"`).
   - `budget` (float): The budget for the buy order.
   - `transaction_slot_id` (integer): The ID of the transaction slot to associate with this order.
 
@@ -36,7 +36,12 @@ defmodule ElixirBinanceBot.TransactionMaker do
 
   ## Examples
 
-      ElixirBinanceBot.TransactionMaker.make_buy("BTCUSDT", 100.0, 1)
+      iex> ElixirBinanceBot.TransactionMaker.make_buy("BTCFDUSD", 10.42416, 1)
+      {:ok, :transaction_done}
+
+      iex> ElixirBinanceBot.TransactionMaker.make_buy("notexistingsymbol", 10.42416, 1)
+      {:nok, :transaction_not_done, "Request failed with status code 400. Body:{\"code\":-1100,\"msg\":\"Illegal
+      characters found in parameter 'symbol'; legal range is '^[A-Z0-9-_.]{1,20}$'.\"}"}
 
   """
   def make_buy(trading_pair, budget, transaction_slot_id) do
@@ -58,8 +63,13 @@ defmodule ElixirBinanceBot.TransactionMaker do
 
   ## Examples
 
-      transaction = %{amount: 0.5, symbol: "BTCUSDT", real_bought_for: 500.0, transaction_slot_id: 1}
-      ElixirBinanceBot.TransactionMaker.make_sell(transaction)
+      iex> transaction = %{amount: 0.5, symbol: "BTCFDUSD", real_bought_for: 500.0, transaction_slot_id: 1}
+      iex> ElixirBinanceBot.TransactionMaker.make_sell(transaction)
+      {:ok, :transaction_done}
+
+      iex> transaction = %{amount: 0.5, symbol: "notexistingsymbol", real_bought_for: 500.0, transaction_slot_id: 1}
+      iex> ElixirBinanceBot.TransactionMaker.make_sell(transaction)
+      {:nok, :transaction_not_done, reason}
 
   """
   def make_sell(transaction) do
@@ -83,7 +93,13 @@ defmodule ElixirBinanceBot.TransactionMaker do
         {:reply, {:ok, :transaction_done}, state}
 
       {:error, reason} ->
-        Logger.info(%{reason: reason, trading_pair: trading_pair, budget: budget, transaction_slot_id: transaction_slot_id})
+        Logger.info(%{
+          reason: reason,
+          trading_pair: trading_pair,
+          budget: budget,
+          transaction_slot_id: transaction_slot_id
+        })
+
         {:reply, {:nok, :transaction_not_done, reason}, state}
     end
   end
@@ -183,7 +199,7 @@ defmodule ElixirBinanceBot.TransactionMaker do
 
   @doc false
   defp calculate_profit(sold_for, bought_for) do
-    sold_for - bought_for
+    (sold_for - bought_for)
     |> NumberFormatter.dynamic_format()
   end
 end
