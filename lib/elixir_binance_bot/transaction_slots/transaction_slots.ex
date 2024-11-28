@@ -2,6 +2,7 @@ defmodule ElixirBinanceBot.TransactionSlots do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query
+  require Logger
   alias ElixirBinanceBot.Repo
   alias __MODULE__
 
@@ -43,7 +44,7 @@ defmodule ElixirBinanceBot.TransactionSlots do
       :trades_done,
       :status
     ])
-    |> validate_inclusion(:status, ["ready", "busy"])
+    |> validate_inclusion(:status, ["ready", "busy", "blocked"])
   end
 
   def create_new_transaction_slot(budget, trade_coin) do
@@ -71,8 +72,24 @@ defmodule ElixirBinanceBot.TransactionSlots do
       )
 
     case Repo.one(query) do
-      nil -> {:nok, :no_free_transaction_slot}
-      free_transaction_slot -> {:ok, free_transaction_slot}
+      nil ->
+        {:error, "No free transaction slot for #{trade_coin}"}
+
+      free_transaction_slot ->
+        cond do
+          free_transaction_slot.budget == 0.0 ->
+            update_transaction_slot(free_transaction_slot.id, %{
+              budget: free_transaction_slot.budget,
+              trades_done: +0,
+              status: "blocked"
+            })
+
+            Logger.error("Transaction slot id: #{free_transaction_slot.id} blocked!")
+            {:error, "Transaction slot id: #{free_transaction_slot.id} blocked!"}
+
+          true ->
+            {:ok, free_transaction_slot}
+        end
     end
   end
 end
