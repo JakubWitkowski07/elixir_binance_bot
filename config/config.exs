@@ -22,3 +22,5 @@ config :logger, :default_handler,
     max_no_files: 5,
     compress_on_rotate: true
   ]
+
+import_config "#{config_env()}.exs"

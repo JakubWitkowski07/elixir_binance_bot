@@ -27,6 +27,10 @@ elixir_binance_bot-*.tar
 
 # secret.ex file with API keys, used in development
 /config/secret.exs
+/config/secret_test.exs
 
 # vscode config
 /.vscode
+
+# system log for debugging
+system.log

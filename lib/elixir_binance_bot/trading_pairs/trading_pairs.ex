@@ -15,6 +15,7 @@ defmodule ElixirBinanceBot.TradingPairs do
     trading_pair
     |> cast(attrs, [:symbol, :last_price])
     |> validate_required([:symbol])
+    |> unique_constraint(:symbol, message: "has already been taken")
   end
 
   def insert_trading_pair(trading_pair) do
