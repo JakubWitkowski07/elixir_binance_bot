@@ -19,16 +19,8 @@ erl_crash.dump
 # Also ignore archive artifacts (built via "mix archive.build").
 *.ez
 
+# Ignore package tarball (built via "mix hex.build").
+trading_app-*.tar
+
 # Temporary files, for example, from tests.
 /tmp/
-
-# secret.ex file with API keys, used in development
-/config/secret.exs
-/config/secret_test.exs
-/config/secret_api.exs
-
-# vscode config
-/.vscode
-
-# system log for debugging
-system.log
