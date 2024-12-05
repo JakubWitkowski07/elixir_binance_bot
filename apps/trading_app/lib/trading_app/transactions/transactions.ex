@@ -1,5 +1,6 @@
 defmodule TradingApp.Transactions do
   use Ecto.Schema
+  import Ecto.Query
   import Ecto.Changeset
   alias TradingApp.Repo
   alias __MODULE__
@@ -70,5 +71,14 @@ defmodule TradingApp.Transactions do
     transaction
     |> update_changeset(transaction_data)
     |> Repo.update()
+  end
+
+  def get_pending_transatcions do
+    query =
+      from(transaction in Transactions,
+        where: transaction.status == "pending"
+      )
+
+    Repo.all(query)
   end
 end
