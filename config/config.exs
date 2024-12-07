@@ -22,6 +22,9 @@ config :trading_interface,
   ecto_repos: [TradingInterface.Repo],
   generators: [timestamp_type: :utc_datetime]
 
+config :trading_app,
+  ecto_repos: [TradingApp.Repo]
+
 # Configures the endpoint
 config :trading_interface, TradingInterfaceWeb.Endpoint,
   url: [host: "localhost"],
@@ -83,3 +86,7 @@ import_config "#{config_env()}.exs"
 #       format: "$date $time [$level] $metadata$message\n",
 #       metadata: [:user_id]
 #
+
+# Turning off debug notifications from database
+config :trading_app, TradingApp.Repo,
+  log: false
