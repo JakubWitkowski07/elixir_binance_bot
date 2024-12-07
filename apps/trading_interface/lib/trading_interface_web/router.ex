@@ -18,7 +18,7 @@ defmodule TradingInterfaceWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    get "/transactions", TransactionsController, :index
+    live "/transactions", TransactionsLive, :index
   end
 
   # Other scopes may use custom stacks.

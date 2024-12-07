@@ -7,7 +7,8 @@ defmodule TradingApp.Application do
       TradingApp.Repo,
       TradingApp.PriceChecker,
       TradingApp.TransactionMaker,
-      TradingApp.TransactionScheduler
+      TradingApp.TransactionScheduler,
+      TradingApp.DatabaseListener
     ]
 
     opts = [strategy: :one_for_one, name: TradingApp.Supervisor]

@@ -73,7 +73,7 @@ defmodule TradingApp.Transactions do
     |> Repo.update()
   end
 
-  def get_pending_transatcions do
+  def get_pending_transactions do
     query =
       from(transaction in Transactions,
         where: transaction.status == "pending"
