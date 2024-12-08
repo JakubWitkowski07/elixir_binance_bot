@@ -1,4 +1,5 @@
 defmodule TradingApp.PriceChecker do
+  alias Phoenix.PubSub
   use GenServer
 
   @doc """
@@ -34,13 +35,19 @@ defmodule TradingApp.PriceChecker do
     GenServer.call(__MODULE__, {:fetch_actual_price, trading_pair})
   end
 
+  def update_state do
+    GenServer.cast(__MODULE__, {:update_state})
+  end
+
   @impl true
   @doc """
   Initializes the `PriceChecker` state.
 
   This function sets up the GenServer with its initial state.
   """
-  def init(state) do
+  def init(_state) do
+    state = TradingApp.TradingPairs.fetch_trading_symbols()
+    schedule_fetch_prices()
     {:ok, state}
   end
 
@@ -67,5 +74,34 @@ defmodule TradingApp.PriceChecker do
       {:error, reason} ->
         {:reply, {:nok, reason}, state}
     end
+  end
+
+  @impl true
+  def handle_cast({:update_state}, _state) do
+    state = TradingApp.TradingPairs.fetch_trading_symbols()
+    {:noreply, state}
+  end
+
+  @impl true
+  def handle_info(:fetch_prices, state) do
+    # Fetch actual prices for all trading pairs
+    case BinanceApiClient.check_prices(state) do
+      {:ok, prices_table} ->
+        IO.inspect(prices_table, label: "Fetched Prices")
+        PubSub.broadcast(TradingInterface.PubSub, "price_updates", prices_table)
+      {:error, reason} ->
+        IO.puts("Error fetching prices: #{inspect(reason)}")
+    end
+
+
+    # Reschedule the next fetch
+    schedule_fetch_prices()
+
+    {:noreply, state}
+  end
+
+  # Schedules the next fetch_actual_prices call
+  defp schedule_fetch_prices do
+    Process.send_after(self(), :fetch_prices, 5_000) # 1 second
   end
 end

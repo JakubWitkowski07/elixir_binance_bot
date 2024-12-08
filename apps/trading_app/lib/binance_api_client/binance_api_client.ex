@@ -44,6 +44,32 @@ defmodule BinanceApiClient do
     end
   end
 
+  def check_prices(symbols) when is_list(symbols) do
+    {:ok, url} = build_url(symbols)
+
+    case HTTPoison.get(url) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        case Jason.decode(body) do
+        {:ok, prices} when is_list(prices) ->
+          result =
+            Enum.into(prices, %{}, fn %{"symbol" => symbol, "price" => price} ->
+              {symbol, String.to_float(price)}
+            end)
+
+          {:ok, result}
+
+        {:error, _error} ->
+          {:error, "Failed to parse response"}
+        end
+
+      {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
+        {:error, "Error: #{status_code} - #{body}"}
+
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        {:error, "Request failed: #{inspect(reason)}"}
+    end
+  end
+
   def post_order(symbol, side, type, opts \\ []) do
     # Get Binance server time
     case get_binance_server_time() do
@@ -124,5 +150,14 @@ defmodule BinanceApiClient do
       {:error, %HTTPoison.Error{reason: reason}} ->
         {:error, reason}
     end
+  end
+
+  def build_url(symbols) do
+    encoded_symbols = Jason.encode!(symbols) # Encode list to JSON array as a string
+
+    IO.inspect(encoded_symbols)
+    url = "#{@base_url}/api/v3/ticker/price?symbols=#{encoded_symbols}"
+    IO.inspect(url)
+    {:ok, url}
   end
 end
