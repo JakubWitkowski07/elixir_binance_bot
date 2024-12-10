@@ -92,4 +92,13 @@ defmodule TradingApp.TransactionSlots do
         end
     end
   end
+
+  def fetch_all_transaction_slots do
+    query =
+      from(transaction_slot in TransactionSlots,
+      select: transaction_slot,
+      order_by: [asc: transaction_slot.id])
+
+    Repo.all(query)
+  end
 end

@@ -1,4 +1,5 @@
 defmodule TradingApp.PriceChecker do
+  require Logger
   alias Phoenix.PubSub
   use GenServer
 
@@ -87,10 +88,9 @@ defmodule TradingApp.PriceChecker do
     # Fetch actual prices for all trading pairs
     case BinanceApiClient.check_prices(state) do
       {:ok, prices_table} ->
-        IO.inspect(prices_table, label: "Fetched Prices")
         PubSub.broadcast(TradingInterface.PubSub, "price_updates", prices_table)
       {:error, reason} ->
-        IO.puts("Error fetching prices: #{inspect(reason)}")
+        Logger.warning("Error fetching prices: #{inspect(reason)}")
     end
 
 

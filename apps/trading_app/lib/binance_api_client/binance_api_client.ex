@@ -153,11 +153,8 @@ defmodule BinanceApiClient do
   end
 
   def build_url(symbols) do
-    encoded_symbols = Jason.encode!(symbols) # Encode list to JSON array as a string
-
-    IO.inspect(encoded_symbols)
+    encoded_symbols = Jason.encode!(symbols)
     url = "#{@base_url}/api/v3/ticker/price?symbols=#{encoded_symbols}"
-    IO.inspect(url)
     {:ok, url}
   end
 end
