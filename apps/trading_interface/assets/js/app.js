@@ -22,8 +22,30 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
+let Hooks = {};
+
+Hooks.ProfitColor = {
+  mounted() {
+    this.applyColor();
+  },
+  updated() {
+    this.applyColor();
+  },
+  applyColor() {
+    const profit = parseFloat(this.el.dataset.profit); // Read profit value from the data attribute
+    if (profit >= 0) {
+      this.el.style.color = "green";
+    } else if (profit < 0) {
+      this.el.style.color = "red";
+    } else {
+      this.el.style.color = "black";
+    }
+  }
+}
+
 let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 let liveSocket = new LiveSocket("/live", Socket, {
+  hooks: Hooks,
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken}
 })
