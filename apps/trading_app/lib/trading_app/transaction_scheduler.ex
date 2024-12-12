@@ -86,12 +86,12 @@ defmodule TradingApp.TransactionScheduler do
   @doc false
   defp process_trading_pair(trading_pair) do
     with {:ok, trade_coin} <- fetch_trade_coin(trading_pair),
-         {:ok, free_transaction_slot} <-
-           TransactionSlots.fetch_free_transaction_slot(trade_coin),
          {:ok, pending_transactions} <- fetch_pending_for_trading_pair(trading_pair) do
-      handle_transactions(trading_pair, free_transaction_slot, pending_transactions)
+      handle_transactions(trade_coin, trading_pair, pending_transactions)
     else
-      {:error, reason} -> {:error, reason}
+      {:error, reason} ->
+        Logger.info("#{reason}")
+        {:error, reason}
     end
   end
 
@@ -128,17 +128,20 @@ defmodule TradingApp.TransactionScheduler do
   end
 
   @doc false
-  defp handle_transactions(trading_pair, free_transaction_slot, pending_transactions) do
-    case compare_lowest_and_highest_buy_price(pending_transactions, trading_pair) do
-      {:ok, :post_buy_order} ->
-        TransactionMaker.make_buy(
-          trading_pair,
-          free_transaction_slot.budget,
-          free_transaction_slot.id
-        )
-
+  defp handle_transactions(trade_coin, trading_pair, pending_transactions) do
+    with {:ok, :post_buy_order} <- compare_lowest_and_highest_buy_price(pending_transactions, trading_pair),
+         {:ok, free_transaction_slot} <- TransactionSlots.fetch_free_transaction_slot(trade_coin) do
+          TransactionMaker.make_buy(
+            trading_pair,
+            free_transaction_slot.budget,
+            free_transaction_slot.id
+          )
+    else
       {:nok, :do_not_buy} ->
         {:nok, :do_not_buy}
+
+      {:nok, :no_free_transaction_slot} ->
+        {:nok, :no_free_transaction_slot}
     end
 
     Enum.each(pending_transactions, fn pending_transaction ->

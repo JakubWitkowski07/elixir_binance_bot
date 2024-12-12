@@ -73,7 +73,7 @@ defmodule TradingApp.TransactionSlots do
 
     case Repo.one(query) do
       nil ->
-        {:error, "No free transaction slot for #{trade_coin}"}
+        {:nok, :no_free_transaction_slot}
 
       free_transaction_slot ->
         cond do
