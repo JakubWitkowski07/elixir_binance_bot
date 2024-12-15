@@ -119,18 +119,24 @@ defmodule TradingApp.TransactionScheduler do
   end
 
   @doc false
-  defp handle_transactions(trading_pair, free_transaction_slot, :no_pending_transactions) do
-    TransactionMaker.make_buy(
-      trading_pair,
-      free_transaction_slot.budget,
-      free_transaction_slot.id
-    )
+  defp handle_transactions(trade_coin, trading_pair, :no_pending_transactions) do
+    case TransactionSlots.fetch_free_transaction_slot(trade_coin) do
+      {:ok, free_transaction_slot} ->
+        TransactionMaker.make_buy(
+          trading_pair,
+          free_transaction_slot.budget,
+          free_transaction_slot.id
+        )
+      {:nok, :no_free_transaction_slot} ->
+        {:nok, :no_free_transaction_slot}
+    end
   end
 
   @doc false
   defp handle_transactions(trade_coin, trading_pair, pending_transactions) do
     with {:ok, :post_buy_order} <- compare_lowest_and_highest_buy_price(pending_transactions, trading_pair),
          {:ok, free_transaction_slot} <- TransactionSlots.fetch_free_transaction_slot(trade_coin) do
+
           TransactionMaker.make_buy(
             trading_pair,
             free_transaction_slot.budget,
