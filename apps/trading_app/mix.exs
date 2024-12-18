@@ -17,7 +17,7 @@ defmodule TradingApp.MixProject do
     ]
   end
 
-   # Run "mix help compile.app" to learn about applications.
+  # Run "mix help compile.app" to learn about applications.
   def application do
     [
       extra_applications: [:logger],
@@ -43,7 +43,7 @@ defmodule TradingApp.MixProject do
 
   defp aliases do
     [
-     test: ["ecto.create --quiet", "ecto.migrate", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
 end

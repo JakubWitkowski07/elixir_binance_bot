@@ -88,5 +88,4 @@ import_config "#{config_env()}.exs"
 #
 
 # Turning off debug notifications from database
-config :trading_app, TradingApp.Repo,
-  log: false
+config :trading_app, TradingApp.Repo, log: false

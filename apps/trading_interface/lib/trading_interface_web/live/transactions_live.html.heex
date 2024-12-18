@@ -1,5 +1,7 @@
 <div>
-  <h1 style="text-align: left; font-family: Arial, sans-serif; color: #333;">Open Transactions</h1>
+  <h1 style="text-align: left; font-family: Arial, sans-serif; color: #333;">
+    Open Transactions
+  </h1>
   <table style="width: 100%; border-collapse: collapse; margin: 20px auto; font-family: Arial, sans-serif; color: #555;">
     <thead>
       <tr style="background-color: #f4f4f4; text-align: left;">
@@ -11,26 +13,37 @@
         <th style="padding: 10px; border-bottom: 2px solid #ddd;">Real Bought For</th>
         <th style="padding: 10px; border-bottom: 2px solid #ddd;">Buy Date</th>
         <th style="padding: 10px; border-bottom: 2px solid #ddd;">Status</th>
+        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Current Price</th>
         <th style="padding: 10px; border-bottom: 2px solid #ddd;">Current Profit</th>
       </tr>
     </thead>
     <tbody>
-  <%= for transaction <- @transactions do %>
-    <tr style="border-bottom: 1px solid #ddd;">
-      <td style="padding: 10px;"><%= transaction.id %></td>
-      <td style="padding: 10px;"><%= transaction.symbol %></td>
-      <td style="padding: 10px;"><%= transaction.buy_price %></td>
-      <td style="padding: 10px;"><%= transaction.sell_price %></td>
-      <td style="padding: 10px;"><%= transaction.amount %></td>
-      <td style="padding: 10px;"><%= transaction.real_bought_for %></td>
-      <td style="padding: 10px;"><%= transaction.inserted_at %></td>
-      <td style="padding: 10px;"><%= transaction.status %></td>
-      <td id={"profit-#{transaction.id}"} data-profit={"#{calculate_profit(@prices[transaction.symbol], transaction.buy_price, transaction.amount)}"} phx-hook="ProfitColor" style="padding: 10px; font-weight: bold;">
-        <%= calculate_profit(@prices[transaction.symbol], transaction.buy_price, transaction.amount) %>
-        <%= fetch_trade_coin(transaction.symbol) %>
-      </td>
-    </tr>
-  <% end %>
-</tbody>
+      <%= for transaction <- @transactions do %>
+        <tr style="border-bottom: 1px solid #ddd;">
+          <td style="padding: 10px;">{transaction.id}</td>
+          <td style="padding: 10px;">{transaction.symbol}</td>
+          <td style="padding: 10px;">{transaction.buy_price}</td>
+          <td style="padding: 10px;">{transaction.sell_price}</td>
+          <td style="padding: 10px;">{transaction.amount}</td>
+          <td style="padding: 10px;">{transaction.real_bought_for}</td>
+          <td style="padding: 10px;">{transaction.inserted_at}</td>
+          <td style="padding: 10px;">{transaction.status}</td>
+          <td style="padding: 10px;">{@prices[transaction.symbol]}</td>
+          <td
+            id={"profit-#{transaction.id}"}
+            data-profit={"#{calculate_profit(@prices[transaction.symbol], transaction.buy_price, transaction.amount)}"}
+            phx-hook="ProfitColor"
+            style="padding: 10px; font-weight: bold;"
+          >
+            {calculate_profit(
+              @prices[transaction.symbol],
+              transaction.buy_price,
+              transaction.amount
+            )}
+            {fetch_trade_coin(transaction.symbol)}
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
   </table>
 </div>

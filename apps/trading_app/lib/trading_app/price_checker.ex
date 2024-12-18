@@ -36,6 +36,19 @@ defmodule TradingApp.PriceChecker do
     GenServer.call(__MODULE__, {:fetch_actual_price, trading_pair})
   end
 
+  @doc """
+  Updates actual state of GenServer with actual trading pairs fetched from trading_pairs table in database.
+
+  ## Returns
+
+  - `{:noreply, state}`: Trading pairs table fetched from database.
+
+  ## Examples
+
+      iex> TradingApp.PriceChecker.update_state()
+      {:noreply, state}
+
+  """
   def update_state do
     GenServer.cast(__MODULE__, {:update_state})
   end
@@ -53,20 +66,6 @@ defmodule TradingApp.PriceChecker do
   end
 
   @impl true
-  @doc """
-  Handles the `{:fetch_actual_price, trading_pair}` call.
-
-  Fetches the current price for the given trading pair by calling the Binance API and returns the result.
-
-  ## Parameters
-
-  - `trading_pair`: The trading pair for which the price is being fetched.
-
-  ## Returns
-
-  - `{:reply, {:ok, actual_price}, state}`: On success, returns the price and keeps the state unchanged.
-  - `{:reply, {:nok, reason}, state}`: On failure, returns the error reason and keeps the state unchanged.
-  """
   def handle_call({:fetch_actual_price, trading_pair}, _from, state) do
     case BinanceApiClient.check_price(trading_pair) do
       {:ok, actual_price} ->
@@ -78,30 +77,33 @@ defmodule TradingApp.PriceChecker do
   end
 
   @impl true
+  # Function called after updating the trading pairs table in database to update state for prices table.
   def handle_cast({:update_state}, _state) do
     state = TradingApp.TradingPairs.fetch_trading_symbols()
     {:noreply, state}
   end
 
   @impl true
+  # Function called in loop to update stete with actual prices of trading pairs.
+  # Updated prices table is broadcasted to TradingInterface for refreshing data in LiveView page.
   def handle_info(:fetch_prices, state) do
     # Fetch actual prices for all trading pairs
     case BinanceApiClient.check_prices(state) do
       {:ok, prices_table} ->
         PubSub.broadcast(TradingInterface.PubSub, "price_updates", prices_table)
+
       {:error, reason} ->
         Logger.warning("Error fetching prices: #{inspect(reason)}")
     end
 
-
     # Reschedule the next fetch
     schedule_fetch_prices()
-
     {:noreply, state}
   end
 
-  # Schedules the next fetch_actual_prices call
+  # Schedules the next prices fetching after set time.
   defp schedule_fetch_prices do
-    Process.send_after(self(), :fetch_prices, 5_000) # 1 second
+    # 5 seconds
+    Process.send_after(self(), :fetch_prices, 5_000)
   end
 end

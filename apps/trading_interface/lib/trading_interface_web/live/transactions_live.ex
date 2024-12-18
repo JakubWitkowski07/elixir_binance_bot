@@ -1,5 +1,5 @@
 defmodule TradingInterfaceWeb.TransactionsLive do
-require Logger
+  require Logger
   use TradingInterfaceWeb, :live_view
 
   alias TradingApp.Transactions
@@ -11,13 +11,16 @@ require Logger
     end
 
     {:ok,
-      socket
-      |> assign(:transactions, fetch_transactions())
-      |> assign(:prices, %{}) # Initialize prices map
-    }
+     socket
+     |> assign(:transactions, fetch_transactions())
+     # Initialize prices map
+     |> assign(:prices, %{})}
   end
 
-  def handle_info(%{"data" => _data, "id" => _id, "table" => "transactions", "type" => _type}, socket) do
+  def handle_info(
+        %{"data" => _data, "id" => _id, "table" => "transactions", "type" => _type},
+        socket
+      ) do
     {:noreply, assign(socket, :transactions, fetch_transactions())}
   end
 
@@ -35,7 +38,9 @@ require Logger
     Transactions.get_pending_transactions()
   end
 
-  defp calculate_profit(nil, _buy_price, _amount), do: "N/A" # No price available
+  # No price available
+  defp calculate_profit(nil, _buy_price, _amount), do: "N/A"
+
   defp calculate_profit(current_price, buy_price, amount) do
     profit = (current_price - buy_price) * amount
     TradingApp.NumberFormatter.dynamic_format(profit)

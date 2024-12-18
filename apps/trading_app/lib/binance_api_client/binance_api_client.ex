@@ -50,16 +50,16 @@ defmodule BinanceApiClient do
     case HTTPoison.get(url) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         case Jason.decode(body) do
-        {:ok, prices} when is_list(prices) ->
-          result =
-            Enum.into(prices, %{}, fn %{"symbol" => symbol, "price" => price} ->
-              {symbol, String.to_float(price)}
-            end)
+          {:ok, prices} when is_list(prices) ->
+            result =
+              Enum.into(prices, %{}, fn %{"symbol" => symbol, "price" => price} ->
+                {symbol, String.to_float(price)}
+              end)
 
-          {:ok, result}
+            {:ok, result}
 
-        {:error, _error} ->
-          {:error, "Failed to parse response"}
+          {:error, _error} ->
+            {:error, "Failed to parse response"}
         end
 
       {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->

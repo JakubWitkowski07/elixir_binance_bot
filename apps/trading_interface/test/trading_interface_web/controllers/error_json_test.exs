@@ -2,7 +2,9 @@ defmodule TradingInterfaceWeb.ErrorJSONTest do
   use TradingInterfaceWeb.ConnCase, async: true
 
   test "renders 404" do
-    assert TradingInterfaceWeb.ErrorJSON.render("404.json", %{}) == %{errors: %{detail: "Not Found"}}
+    assert TradingInterfaceWeb.ErrorJSON.render("404.json", %{}) == %{
+             errors: %{detail: "Not Found"}
+           }
   end
 
   test "renders 500" do

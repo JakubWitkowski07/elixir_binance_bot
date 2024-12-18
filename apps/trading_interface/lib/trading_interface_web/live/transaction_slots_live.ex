@@ -11,9 +11,8 @@ defmodule TradingInterfaceWeb.TransactionSlotsLive do
     end
 
     {:ok,
-      socket
-      |> assign(:transaction_slots, fetch_transaction_slots())
-    }
+     socket
+     |> assign(:transaction_slots, fetch_transaction_slots())}
   end
 
   @impl true
