@@ -66,7 +66,11 @@ defmodule TradingApp.TransactionSlots do
       :trades_done,
       :status
     ])
+    |> validate_inclusion(:trade_coin, ["FDUSD", "BTC"],
+      message: "Trade coin should be FDUSD or BTC"
+    )
     |> validate_inclusion(:status, ["ready"])
+    |> validate_number(:budget, greater_than: 0.0, message: "Budget must be greater than 0")
   end
 
   @doc """
@@ -119,9 +123,19 @@ defmodule TradingApp.TransactionSlots do
   def create_new_transaction_slot(budget, trade_coin) do
     attrs = %{trade_coin: trade_coin, budget: budget, trades_done: 0, status: "ready"}
 
-    %TransactionSlots{}
-    |> create_changeset(attrs)
-    |> Repo.insert()
+    case %TransactionSlots{}
+         |> create_changeset(attrs)
+         |> Repo.insert() do
+      {:ok, %TransactionSlots{}} ->
+        {:ok, %TransactionSlots{}}
+
+      {:error, changeset} ->
+        {msg, _inclusion} =
+          changeset.errors
+          |> Keyword.get(:trade_coin)
+
+        {:error, msg}
+    end
   end
 
   @doc """

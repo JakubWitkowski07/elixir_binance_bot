@@ -12,7 +12,37 @@ defmodule TradingInterfaceWeb.TransactionSlotsLive do
 
     {:ok,
      socket
-     |> assign(:transaction_slots, fetch_transaction_slots())}
+     |> assign(:transaction_slots, fetch_transaction_slots())
+     |> assign(:show_modal, false)
+     |> assign(:transaction_slot_params, %{"trade_coin" => nil, "budget" => nil})}
+  end
+
+  @impl true
+  def handle_event("toggle_modal", _params, socket) do
+    {:noreply, assign(socket, :show_modal, !socket.assigns.show_modal)}
+  end
+
+  @impl true
+  def handle_event(
+        "create_transaction_slot",
+        %{"trade_coin" => trade_coin, "budget" => budget},
+        socket
+      ) do
+    case TransactionSlots.create_new_transaction_slot(budget, trade_coin) do
+      {:ok, _transaction_slot} ->
+        {:noreply,
+         socket
+         |> assign(:transaction_slots, fetch_transaction_slots())
+         |> assign(:show_modal, false)
+         |> put_flash(:info, "Transaction slot created successfully.")}
+
+      {:error, msg} ->
+        {:noreply,
+         socket
+         |> assign(:transaction_slots, fetch_transaction_slots())
+         |> assign(:show_modal, false)
+         |> put_flash(:error, "Failed to create transaction slot. #{msg}.")}
+    end
   end
 
   @impl true
