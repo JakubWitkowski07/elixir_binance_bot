@@ -20,6 +20,7 @@ defmodule TradingInterfaceWeb.Router do
     get "/", PageController, :home
     live "/transactions", TransactionsLive, :transactions
     live "/transaction_slots", TransactionSlotsLive, :transaction_slots
+    live "/trading_pairs", TradingPairsLive, :trading_pairs
   end
 
   # Other scopes may use custom stacks.

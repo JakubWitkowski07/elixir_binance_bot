@@ -59,11 +59,13 @@ defmodule TradingApp.DatabaseListener do
 
   # Handles notifications for changes in the `trading_pairs` table.
   def handle_info(
-        {:notification, pid, trading_pairs_ref, @trading_pairs_channel, _payload},
+        {:notification, pid, trading_pairs_ref, @trading_pairs_channel, payload},
         %{pid: pid, transactions_ref: _transactions_ref, trading_pairs_ref: trading_pairs_ref} =
           state
       ) do
+    change = Jason.decode!(payload)
     TradingApp.PriceChecker.update_state()
+    PubSub.broadcast(TradingInterface.PubSub, "trading_pairs", change)
     {:noreply, state}
   end
 

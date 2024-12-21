@@ -1,0 +1,66 @@
+<div>
+  <h1 style="text-align: left; font-family: Arial, sans-serif; color: black;">
+    Trading Pairs
+  </h1>
+  <div class="flex item-center mt-4">
+    <button
+      phx-click="toggle_modal"
+      class="button"
+    >
+      New Trading Pair
+    </button>
+  </div>
+  <%= if @show_modal do %>
+  <div class="modal-backdrop">
+      <div class="modal">
+        <div class="modal-header">
+          <h5>New Trading Pair</h5>
+        </div>
+        <div class="modal-body">
+          <!-- Form for Creating Transaction Slot -->
+          <form phx-submit="add_new_trading_pair">
+            <!-- Input for Amount -->
+            <.input
+              value={@trading_pair_params["trading_pair"]}
+              name="trading_pair"
+              placeholder="Trading Pair..."
+              autocomplete="off"
+              label="Trading Pair"
+              phx-debounce="blur"
+            />
+            <div class="flex item-center mt-4 mr-4">
+              <button
+                type="submit"
+                class="button items-center mr-4"
+              >
+                Create
+              </button>
+              <button
+                type="button"
+                phx-click="toggle_modal"
+                class="button items-center mr-4"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <table style="width: 100%; border-collapse: collapse; margin: 20px auto; font-family: Arial, sans-serif; color: #555;">
+    <thead>
+      <tr style="background-color: #f4f4f4; text-align: left;">
+        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Trading Pair</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= for trading_pair <- @trading_pairs do %>
+        <tr style="border-bottom: 1px solid #ddd;">
+          <td style="padding: 10px;">{trading_pair}</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+</div>
