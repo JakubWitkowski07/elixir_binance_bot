@@ -1,0 +1,26 @@
+import Config
+
+import_config "secret_test.exs"
+
+# We don't run a server during test. If one is required,
+# you can enable the server option below.
+config :trading_interface, TradingInterfaceWeb.Endpoint,
+  http: [ip: {127, 0, 0, 1}, port: 4002],
+  secret_key_base: "dc992JKLLHhLbhKsw2vRytFuz2UGaaotHkjw3mgQFE7gO6zbLr/Lalw0LQy3htnm",
+  server: false
+
+# In test we don't send emails
+config :trading_interface, TradingInterface.Mailer, adapter: Swoosh.Adapters.Test
+
+# Disable swoosh api client as it is only required for production adapters
+config :swoosh, :api_client, false
+
+# Print only warnings and errors during test
+config :logger, level: :warning
+
+# Initialize plugs at runtime for faster test compilation
+config :phoenix, :plug_init_mode, :runtime
+
+# Enable helpful, but potentially expensive runtime checks
+config :phoenix_live_view,
+  enable_expensive_runtime_checks: true

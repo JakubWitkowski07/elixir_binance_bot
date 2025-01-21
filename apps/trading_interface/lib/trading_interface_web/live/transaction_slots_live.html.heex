@@ -1,0 +1,85 @@
+<div>
+  <h1 style="text-align: left; font-family: Arial, sans-serif; color: #333;">
+    Transaction Slots
+  </h1>
+  <!-- New Transaction Slot Button -->
+  <div class="flex item-center mt-4">
+    <button
+      phx-click="toggle_modal"
+      class="button"
+    >
+      New Transaction Slot
+    </button>
+  </div>
+  <%= if @show_modal do %>
+    <div class="modal-backdrop">
+      <div class="modal">
+        <div class="modal-header">
+          <h5>New Transaction Slot</h5>
+          <button phx-click="toggle_modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <!-- Form for Creating Transaction Slot -->
+          <form phx-submit="create_transaction_slot">
+            <!-- Select for Trade Coin -->
+            <select class="w-full" name="trade_coin" value={@transaction_slot_params["trade_coin"]} phx-debounce="blur">
+              <option value="BTC">BTC</option>
+              <option value="FDUSD">FDUSD</option>
+            </select>
+            
+            <!-- Input for Amount -->
+            <.input
+              value={@transaction_slot_params["budget"]}
+              name="budget"
+              placeholder="Amount..."
+              type="number"
+              step="any"
+              autocomplete="off"
+              label="Amount"
+              phx-debounce="blur"
+            />
+            <div class="flex item-center mt-4 mr-4">
+              <button
+                type="submit"
+                class="button items-center mr-4"
+              >
+                Create
+              </button>
+              <button
+                type="button"
+                phx-click="toggle_modal"
+                class="button items-center mr-4"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <table style="width: 100%; border-collapse: collapse; margin: 20px auto; font-family: Arial, sans-serif; color: #555;">
+    <thead>
+      <tr style="background-color: #f4f4f4; text-align: left;">
+        <th style="padding: 10px; border-bottom: 2px solid #ddd;">ID</th>
+        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Trade coin</th>
+        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Budget</th>
+        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Trades done</th>
+        <th style="padding: 10px; border-bottom: 2px solid #ddd;">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= for transaction_slot <- @transaction_slots do %>
+        <tr style="border-bottom: 1px solid #ddd;">
+          <td style="padding: 10px;">{transaction_slot.id}</td>
+          <td style="padding: 10px;">{transaction_slot.trade_coin}</td>
+          <td style="padding: 10px;">
+            {TradingApp.NumberFormatter.dynamic_format(transaction_slot.budget)}
+          </td>
+          <td style="padding: 10px;">{transaction_slot.trades_done}</td>
+          <td style="padding: 10px;">{transaction_slot.status}</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
